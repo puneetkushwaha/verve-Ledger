@@ -95,17 +95,17 @@ export default function DashboardLayout({
     <>
       {/* Logo */}
       <div className={cn(
-        "flex items-center h-20 px-5 shrink-0 border-b border-white/5",
+        "flex items-center h-[72px] px-4 shrink-0 border-b border-white/[0.06]",
         isCollapsed ? "justify-center" : "gap-3 justify-between"
       )}>
         <Link href="/dashboard" className="flex items-center gap-3 group min-w-0">
-          <div className="w-9 h-9 shrink-0 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-[#00CF64]/40 transition-all p-1.5">
-            <Image src="/w-logo.png" alt="Verve" width={24} height={24} className="object-contain" unoptimized />
+          <div className="w-8 h-8 shrink-0 rounded-lg bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center group-hover:border-[#00CF64]/50 transition-all p-1">
+            <Image src="/w-logo.png" alt="Verve" width={22} height={22} className="object-contain" unoptimized />
           </div>
           {!isCollapsed && (
             <div className="min-w-0 overflow-hidden">
-              <p className="text-sm font-black text-white uppercase tracking-tighter font-outfit truncate">Verve Ledger</p>
-              <p className="text-[9px] text-[#00CF64] font-black uppercase tracking-[0.2em] truncate">Nova Technologies</p>
+              <p className="text-[13px] font-black text-white uppercase tracking-tight font-outfit truncate">Verve Ledger</p>
+              <p className="text-[9px] text-[#00CF64]/80 font-bold uppercase tracking-[0.15em] truncate">Nova Technologies</p>
             </div>
           )}
         </Link>
@@ -140,16 +140,16 @@ export default function DashboardLayout({
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all group relative",
-                isCollapsed ? "justify-center px-0" : "",
+                "flex items-center gap-3 px-3 py-3 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all duration-200 group relative",
+                isCollapsed ? "justify-center" : "",
                 isActive
-                  ? "bg-[#00CF64] text-white shadow-[0_4px_20px_rgba(0,207,100,0.25)]"
-                  : "text-slate-500 hover:text-white hover:bg-white/5"
+                  ? "bg-[#00CF64] text-white shadow-[0_4px_24px_rgba(0,207,100,0.3)]"
+                  : "text-slate-500 hover:text-white hover:bg-white/[0.06]"
               )}
             >
               <item.icon className={cn(
-                "w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110",
-                isActive ? "text-white" : "text-slate-600 group-hover:text-white"
+                "w-5 h-5 shrink-0 transition-all duration-200",
+                isActive ? "text-white" : "text-slate-500 group-hover:text-white group-hover:scale-110"
               )} />
               {!isCollapsed && (
                 <span className="truncate">{item.label}</span>
@@ -215,12 +215,12 @@ export default function DashboardLayout({
 
       {/* SIDEBAR */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-[70] bg-[#06060a] border-r border-white/[0.06] flex flex-col transition-all duration-300 shadow-2xl",
+        "fixed inset-y-0 left-0 z-[70] bg-[#06060a] border-r border-white/[0.06] flex flex-col transition-all duration-300 shadow-[4px_0_30px_rgba(0,0,0,0.4)]",
         // Mobile: slide in/out
         "lg:relative lg:translate-x-0",
         isMobileMenuOpen ? "translate-x-0 w-64" : "-translate-x-full lg:translate-x-0",
         // Desktop: collapsed vs expanded
-        isCollapsed ? "lg:w-[68px]" : "lg:w-60"
+        isCollapsed ? "lg:w-[72px]" : "lg:w-64"
       )}>
         <SidebarContent />
       </aside>
