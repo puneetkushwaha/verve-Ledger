@@ -17,6 +17,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { RazorpayScript } from "@/components/payments/RazorpayScript";
+
+const RAZORPAY_KEY_ID = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 
 const plans = [
   {
@@ -58,11 +61,57 @@ export default function SubscriptionPage() {
     }
     
     setLoading(planId);
-    // Simulating payment integration or request
-    setTimeout(() => {
-      toast.success(`Request for ${planId} plan submitted! Admin will contact you.`);
+    
+    try {
+      const plan = plans.find(p => p.id === planId);
+      const amount = planId === "MONTHLY" ? 999 : 4999;
+
+      const res = await fetch("/api/payments/razorpay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          amount,
+          planId,
+          shopId: (session?.user as any)?.shopId
+        }),
+      });
+
+      const order = await res.json();
+
+      if (!res.ok) throw new Error(order.error || "Failed to create order");
+
+      const options = {
+        key: RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: "INR",
+        name: "Verve Ledger",
+        description: `${plan?.name} Subscription`,
+        order_id: order.id,
+        handler: async function (response: any) {
+          toast.success("Payment Successful! Activating your plan...");
+          // We could also call a verification API here, but Webhook is safer.
+          // For immediate UI update, we can refresh the page or session.
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        },
+        prefill: {
+          name: session?.user?.name || "",
+          email: session?.user?.email || "",
+        },
+        theme: {
+          color: "#00CF64",
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message || "Something went wrong");
+    } finally {
       setLoading(null);
-    }, 1500);
+    }
   };
 
   const handleCustomRequest = async (e: React.FormEvent) => {
@@ -96,6 +145,7 @@ export default function SubscriptionPage() {
 
   return (
     <div className="space-y-12 pb-20">
+      <RazorpayScript />
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <h2 className="text-4xl font-black font-outfit text-white tracking-tighter uppercase">Elevate Your Matrix</h2>
         <p className="text-slate-500 font-black uppercase text-[10px] tracking-[0.3em]">

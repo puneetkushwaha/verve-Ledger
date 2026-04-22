@@ -105,7 +105,7 @@ export default function DashboardLayout({
           {!isCollapsed && (
             <div className="min-w-0 overflow-hidden">
               <p className="text-[13px] font-black text-white uppercase tracking-tight font-outfit truncate">Verve Ledger</p>
-              <p className="text-[9px] text-[#00CF64]/80 font-bold uppercase tracking-[0.15em] truncate">Nova Technologies</p>
+              <p className="text-[9px] text-[#00CF64]/80 font-bold uppercase tracking-[0.15em] truncate">Verve Nova Technologies</p>
             </div>
           )}
         </Link>

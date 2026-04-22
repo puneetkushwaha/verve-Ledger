@@ -34,7 +34,7 @@ export function BrandLogo({
         )}>Verve Ledger</span>
         {showSubtext && (
           <span className="text-[7px] md:text-[9px] font-black text-[#10B981] tracking-[0.2em] md:tracking-[0.3em] uppercase mt-0.5 md:mt-1">
-            Nova Technologies
+            Verve Nova Technologies
           </span>
         )}
       </div>

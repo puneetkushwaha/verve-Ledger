@@ -4,6 +4,41 @@ import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { validateSubscription } from "@/lib/subscription";
 
+// GET /api/invoices — fetch all invoices for the current shop
+export async function GET(req: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const user = session.user as any;
+
+  try {
+    const where = user.role === "ADMIN" 
+      ? {} 
+      : { shopId: user.shopId };
+
+    const invoices = await prisma.invoice.findMany({
+      where,
+      include: {
+        customer: true,
+        items: {
+          include: { product: true }
+        },
+        user: { select: { name: true } }
+      },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    });
+
+    return NextResponse.json(invoices);
+  } catch (error) {
+    console.error("Failed to fetch invoices:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
+
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
 
@@ -85,3 +120,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Failed to create invoice" }, { status: 500 });
   }
 }
+

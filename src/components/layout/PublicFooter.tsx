@@ -29,7 +29,7 @@ export function PublicFooter() {
           ))}
         </div>
         <div className="pt-12 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-8 text-center">
-          <p className="text-slate-400 text-[10px] md:text-xs font-black uppercase tracking-widest opacity-60">© 2026 Verve Ledger | Engineered by Verve Nova Technologies</p>
+          <p className="text-slate-400 text-[10px] md:text-xs font-black uppercase tracking-widest opacity-60">© 2026 Verve Ledger | Developed by <a href="https://www.vervenovatech.com/" target="_blank" rel="noopener noreferrer" className="hover:text-[#00CF64] transition-colors">Verve Nova Technologies</a></p>
           <div className="flex gap-8 md:gap-12 text-[9px] md:text-[10px] font-black uppercase tracking-widest">
             <Link href="#" className="text-slate-400 hover:text-[#00CF64] transition-colors opacity-60">Privacy</Link>
             <Link href="#" className="text-slate-400 hover:text-[#00CF64] transition-colors opacity-60">Terms</Link>
