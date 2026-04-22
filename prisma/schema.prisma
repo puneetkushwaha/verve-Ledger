@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Shop {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  address     String?
+  phone       String?
+  email       String?  @unique
+  gstin       String?
+  logoUrl     String?
+  plan        String   @default("FREE") // FREE, MONTHLY, YEARLY, CUSTOM
+  planExpiry  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users       User[]
+  products    Product[]
+  customers   Customer[]
+  invoices    Invoice[]
+  settings    Setting?
+}
+
+// ... other models ...
+
+model PlanRequest {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  shopId      String   @db.ObjectId
+  shopName    String
+  email       String
+  phone       String
+  message     String?
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String?   @unique
+  password      String
+  role          String    @default("STAFF") // ADMIN, OWNER, STAFF
+  shopId        String    @db.ObjectId
+  shop          Shop      @relation(fields: [shopId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  invoices      Invoice[]
+}
+
+model Product {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  sku         String?
+  barcode     String?
+  price       Float
+  stock       Int      @default(0)
+  unit        String   @default("PCS") // PCS, KG, LTR, etc.
+  hsnCode     String?
+  gstRate     Float    @default(18)
+  shopId      String   @db.ObjectId
+  shop        Shop     @relation(fields: [shopId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  invoiceItems InvoiceItem[]
+}
+
+model Customer {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String?
+  phone     String?
+  address   String?
+  shopId    String   @db.ObjectId
+  shop      Shop     @relation(fields: [shopId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  invoices  Invoice[]
+}
+
+model Invoice {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  invoiceNumber String
+  date          DateTime @default(now())
+  dueDate       DateTime?
+  totalAmount   Float
+  taxAmount     Float
+  discount      Float    @default(0)
+  paymentStatus String   @default("PAID") // PAID, UNPAID, PARTIAL
+  paymentMode   String?  // CASH, UPI, CARD, BANK
+  
+  shopId        String   @db.ObjectId
+  shop          Shop     @relation(fields: [shopId], references: [id])
+  
+  customerId    String?  @db.ObjectId
+  customer      Customer? @relation(fields: [customerId], references: [id])
+  
+  userId        String   @db.ObjectId
+  user          User     @relation(fields: [userId], references: [id])
+
+  items         InvoiceItem[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model InvoiceItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  quantity  Int
+  price     Float
+  gstRate   Float
+  gstAmount Float
+  total     Float
+
+  invoiceId String   @db.ObjectId
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model Setting {
+  id              String  @id @default(auto()) @map("_id") @db.ObjectId
+  shopId          String  @unique @db.ObjectId
+  shop            Shop    @relation(fields: [shopId], references: [id])
+  invoicePrefix   String  @default("INV")
+  invoiceNextNumber Int   @default(1)
+  currency        String  @default("INR")
+  themeColor      String  @default("#00CF64")
+  fontFamily      String  @default("Inter")
+  terms           String?
+}
+
