@@ -29,11 +29,10 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        toast.error(result.error);
+        toast.error("Invalid email or password. Please try again.");
       } else {
         toast.success("Login successful!");
-        router.push("/dashboard");
-        router.refresh();
+        window.location.href = "/dashboard";
       }
     } catch (error) {
       toast.error("Something went wrong");
