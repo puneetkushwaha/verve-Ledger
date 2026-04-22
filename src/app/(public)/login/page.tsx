@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { toast } from "sonner";
 import Link from "next/link";
+import { BrandLogo } from "@/components/layout/BrandLogo";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -42,11 +43,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#002E25] text-white selection:bg-[#00CF64]/30 overflow-hidden relative flex items-center justify-center py-20 px-6">
+    <div className="min-h-screen bg-[#02010a] text-white selection:bg-[#00CF64]/30 overflow-hidden relative flex flex-col items-center justify-center py-20 px-6">
       {/* Background Glows */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#00CF64] blur-[200px] rounded-full animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#10B981] blur-[200px] rounded-full animate-pulse delay-1000" />
+      </div>
+
+      {/* Top Logo */}
+      <div className="relative z-10 mb-10">
+        <BrandLogo dark={false} showSubtext={true} />
       </div>
 
       <div className="max-w-4xl w-full grid lg:grid-cols-2 gap-16 items-center relative z-10 animate-slide-up">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, 
@@ -103,8 +104,8 @@ export default function DashboardLayout({
       )}>
         <div className={cn("p-8 flex items-center h-28 shrink-0", isSidebarCollapsed ? "justify-center" : "justify-between")}>
           <Link href="/dashboard" className="flex items-center gap-3 group overflow-hidden">
-            <div className="w-10 h-10 shrink-0 bg-gradient-to-br from-[#00CF64] to-[#10B981] rounded-xl flex items-center justify-center text-white shadow-xl group-hover:scale-110 transition-all">
-              <Package className="w-6 h-6" />
+            <div className="w-10 h-10 shrink-0 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-all p-1.5">
+              <Image src="/w-logo.png" alt="Verve Logo" width={28} height={28} className="object-contain" unoptimized />
             </div>
             {!isSidebarCollapsed && (
               <span className="text-xl font-black font-outfit tracking-tighter text-white uppercase hidden lg:block whitespace-nowrap">
