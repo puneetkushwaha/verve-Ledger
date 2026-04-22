@@ -3,6 +3,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/db";
 import bcrypt from "bcrypt";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -12,10 +14,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        console.log("Authorize attempt for:", credentials?.email);
-        
         if (!credentials?.email || !credentials?.password) {
-          console.error("Missing credentials");
           return null;
         }
 
@@ -25,20 +24,11 @@ export const authOptions: NextAuthOptions = {
             include: { shop: true }
           });
 
-          if (!user) {
-            console.error("User not found in DB:", credentials.email);
-            return null;
-          }
+          if (!user) return null;
 
-          console.log("User found, verifying password...");
           const isValid = await bcrypt.compare(credentials.password, user.password);
+          if (!isValid) return null;
 
-          if (!isValid) {
-            console.error("Invalid password for user:", credentials.email);
-            return null;
-          }
-
-          console.log("Login successful for:", credentials.email);
           return {
             id: user.id,
             name: user.name,
@@ -50,7 +40,7 @@ export const authOptions: NextAuthOptions = {
           };
 
         } catch (error) {
-          console.error("Auth error during authorize callback:", error);
+          console.error("Auth error:", error);
           return null;
         }
       }
@@ -77,16 +67,26 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     }
-
   },
   pages: {
     signIn: "/login",
-    error: "/login", // Redirect to login on error
+    error: "/login",
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
+  },
+  cookies: {
+    sessionToken: {
+      name: isProduction ? "__Secure-next-auth.session-token" : "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: isProduction,
+      },
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
+  debug: !isProduction,
 };
