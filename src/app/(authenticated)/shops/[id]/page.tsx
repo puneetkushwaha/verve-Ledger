@@ -12,11 +12,13 @@ import {
   MapPin,
   Phone,
   Mail,
-  ShieldCheck
+  ShieldCheck,
+  Crown
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -104,7 +106,9 @@ export default function ShopDetailPage({ params }: { params: { id: string } }) {
               </div>
             </div>
           </div>
-          {/* Admin Subscription Management */}
+        </div>
+      </div>
+      {/* Admin Subscription Management */}
       <Card className="bg-[#050505] border border-[#00CF64]/20 rounded-[32px] overflow-hidden relative group">
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#00CF64]/5 blur-[80px] -mr-32 -mt-32" />
         <CardHeader className="p-10 pb-0 flex flex-row items-center justify-between relative z-10">

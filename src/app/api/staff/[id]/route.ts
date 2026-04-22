@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/db";
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user || (session.user as any).role !== "OWNER") {
@@ -11,7 +11,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
   }
 
   const user = session.user as any;
-  const staffId = params.id;
+  const { id: staffId } = await params;
 
   try {
     // Make sure the staff member belongs to this owner's shop

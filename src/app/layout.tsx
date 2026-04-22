@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { Providers } from "@/components/providers";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -34,8 +35,10 @@ export default function RootLayout({
       className={`${inter.variable} ${outfit.variable} h-full antialiased dark`}
     >
       <body className="min-h-full bg-[#02010a] text-white overflow-x-hidden m-0 p-0 font-inter">
-        {children}
-        <Toaster position="top-right" richColors theme="dark" />
+        <Providers>
+          {children}
+          <Toaster position="top-right" richColors theme="dark" />
+        </Providers>
       </body>
     </html>
   );

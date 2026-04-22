@@ -5,7 +5,7 @@ import prisma from "@/lib/db";
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
 
@@ -15,10 +15,11 @@ export async function DELETE(
 
   try {
     const user = session.user as any;
+    const { id } = await params;
 
     // Verify product belongs to shop
     const product = await prisma.product.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!product || product.shopId !== user.shopId) {
@@ -26,7 +27,7 @@ export async function DELETE(
     }
 
     await prisma.product.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ message: "Product deleted" });

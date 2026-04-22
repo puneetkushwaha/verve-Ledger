@@ -5,7 +5,7 @@ import prisma from "@/lib/db";
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
 
@@ -15,7 +15,7 @@ export async function POST(
 
   try {
     const { plan, expiryMonths, expiryYears } = await req.json();
-    const { id } = params;
+    const { id } = await params;
 
     // Calculate expiry date
     let planExpiry = new Date();
