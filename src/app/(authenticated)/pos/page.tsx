@@ -613,7 +613,8 @@ export default function POSPage() {
 
             <div className="grid grid-cols-2 gap-6">
               <Button onClick={() => {
-                const invoiceUrl = `${window.location.origin}/view-invoice/${lastInvoice?.id}`;
+                const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+                const invoiceUrl = `${baseUrl}/view-invoice/${lastInvoice?.id}`;
                 const text = `*Invoice from ${shopDetails?.shopName || 'Verve Nova'}*%0A%0A` +
                   `*Bill No:* ${lastInvoice?.invoiceNumber}%0A` +
                   `*Settlement:* ₹${lastInvoice?.totalAmount}%0A%0A` +
