@@ -5,7 +5,7 @@ import prisma from "@/lib/db";
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -14,7 +14,7 @@ export async function POST(
     }
 
     const { months, planType } = await req.json();
-    const requestId = params.id;
+    const { id: requestId } = await params;
 
     // Get the request details
     const request = await prisma.planRequest.findUnique({
@@ -53,16 +53,17 @@ export async function POST(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
     try {
       const session = await getServerSession(authOptions);
       if (!session || (session.user as any).role !== "ADMIN") {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
-  
+
+      const { id } = await params;
       await prisma.planRequest.update({
-        where: { id: params.id },
+        where: { id },
         data: { status: "REJECTED" }
       });
   
