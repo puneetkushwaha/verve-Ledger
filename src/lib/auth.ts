@@ -8,7 +8,7 @@ const isProduction = process.env.NODE_ENV === "production";
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "Verve Ledger Secure Login",
+      name: "VNT Billzer Secure Login",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }

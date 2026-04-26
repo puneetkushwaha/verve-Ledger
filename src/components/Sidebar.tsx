@@ -19,15 +19,16 @@ import { cn } from "@/lib/utils";
 
 const menuItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "POS Mode", href: "/pos", icon: ShoppingCart, color: "text-[#00CF64]" },
-  { name: "Invoices", href: "/invoices", icon: Receipt },
+  { name: "Billing", href: "/pos", icon: ShoppingCart, color: "text-[#00CF64]" },
+  { name: "Bills List", href: "/invoices", icon: Receipt },
   { name: "Inventory", href: "/inventory", icon: Package },
   { name: "Customers", href: "/customers", icon: Users },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
-  { name: "AI Insights", href: "/ai-insights", icon: BrainCircuit, color: "text-[#10B981]" },
+  { name: "Smart Help", href: "/ai-insights", icon: BrainCircuit, color: "text-[#10B981]" },
   { name: "Shops", href: "/shops", icon: Store },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
+
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -38,7 +39,8 @@ export function Sidebar() {
         <h1 className="text-2xl font-black font-outfit bg-gradient-to-r from-[#00CF64] to-[#10B981] bg-clip-text text-transparent uppercase tracking-tighter">
           Verve Ledger
         </h1>
-        <p className="text-xs text-slate-400 mt-1">Advanced SaaS Billing</p>
+        <p className="text-xs text-slate-400 mt-1">Simple Business Billing</p>
+
       </div>
       
       <nav className="flex-1 px-4 space-y-1">

@@ -9,6 +9,8 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+import { Skeleton } from "@/components/ui/skeleton";
+
 interface Shop {
   id: string;
   name: string;
@@ -57,26 +59,36 @@ export default function ShopsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00CF64]"></div>
+      <div className="space-y-8 animate-pulse">
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-12 w-64 rounded-xl" />
+          <Skeleton className="h-12 w-40 rounded-xl" />
+        </div>
+        <div className="grid grid-cols-1 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-32 w-full rounded-[2rem]" />
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 pb-10">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-black text-white font-outfit uppercase tracking-tighter">
-            {isAdmin ? "Global Enterprise Control" : "Manage Your Shops"}
+          <h2 className="text-xl font-black text-white font-outfit uppercase tracking-tighter">
+            {isAdmin ? "Shops Control" : "Manage Your Shops"}
           </h2>
-          <p className="text-slate-500 mt-1 uppercase text-[10px] font-black tracking-widest">
-            {isAdmin ? "Monitoring all active business units across the matrix" : "Switch between your businesses or add a new one."}
+          <p className="text-slate-500 uppercase text-[7px] font-black tracking-widest mt-1">
+            {isAdmin ? "Global business monitoring" : "Business Profile"}
           </p>
         </div>
-        <Button className="bg-[#00CF64] hover:bg-[#10B981] text-white rounded-xl px-6 font-black uppercase tracking-widest text-[11px] h-12 shadow-[0_0_20px_rgba(0,207,100,0.2)]">
-          <Plus className="w-4 h-4 mr-2" /> Add New Shop
-        </Button>
+        {isAdmin && (
+          <Button className="bg-[#00CF64] hover:bg-[#10B981] text-white rounded-lg px-4 font-black uppercase tracking-widest text-[8px] h-9">
+            <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Shop
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-6">
@@ -88,59 +100,49 @@ export default function ShopsPage() {
           >
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#00CF64]/5 blur-[80px] rounded-full -mr-32 -mt-32 group-hover:bg-[#00CF64]/10 transition-colors" />
             
-            <CardContent className="p-8 flex items-center justify-between relative z-10">
-              <div className="flex items-start gap-8">
-                <div className="w-20 h-20 rounded-3xl bg-white/5 flex items-center justify-center text-slate-600 group-hover:bg-[#00CF64]/10 group-hover:text-[#00CF64] transition-all duration-500 border border-white/5 group-hover:border-[#00CF64]/20 shadow-2xl">
-                  <Store className="w-10 h-10" />
+            <CardContent className="p-3 flex items-center justify-between relative z-10">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-600 border border-white/5 group-hover:border-[#00CF64]/20 transition-all">
+                  <Store className="w-5 h-5" />
                 </div>
                 
-                <div className="space-y-2">
-                  <div className="flex items-center gap-4">
-                    <h3 className="text-2xl font-black text-white font-outfit uppercase tracking-tighter">{shop.name}</h3>
-                    <Badge className="bg-emerald-500/10 text-[#00CF64] border border-[#00CF64]/20 px-3 py-0.5 text-[10px] font-black uppercase tracking-widest">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-black text-white font-outfit uppercase tracking-tighter">{shop.name}</h3>
+                    <Badge className="bg-emerald-500/10 text-[#00CF64] border border-[#00CF64]/20 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest">
                       Active
                     </Badge>
                   </div>
                   
-                  <div className="flex flex-wrap items-center gap-6 text-[11px] font-black uppercase tracking-widest text-slate-500 mt-4">
-                    <span className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5 text-[#00CF64]" /> {shop.address || "No Address"}</span>
-                    <span className="flex items-center gap-2"><Phone className="w-3.5 h-3.5 text-[#00CF64]" /> {shop.phone || "No Phone"}</span>
-                    <span className="flex items-center gap-2"><Mail className="w-3.5 h-3.5 text-[#00CF64]" /> {shop.email || "No Email"}</span>
+                  <div className="flex flex-wrap items-center gap-3 text-[8px] font-black uppercase tracking-widest text-slate-500 mt-1">
+                    <span className="flex items-center gap-1.5"><MapPin className="w-3 h-3 text-[#00CF64]" /> {shop.address || "No Address"}</span>
+                    <span className="flex items-center gap-1.5"><Phone className="w-3 h-3 text-[#00CF64]" /> {shop.phone}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-12">
-                <div className="flex gap-8 border-r border-white/5 pr-12">
+              <div className="flex items-center gap-6">
+                <div className="flex gap-4 border-r border-white/5 pr-6">
                   <div className="text-center">
-                    <p className="text-[10px] text-slate-600 uppercase font-black tracking-[0.2em] mb-1">Products</p>
-                    <div className="flex items-center justify-center gap-2">
-                      <Package className="w-3.5 h-3.5 text-[#00CF64]" />
-                      <p className="text-xl font-black text-white">{shop._count.products}</p>
-                    </div>
+                    <p className="text-[7px] text-slate-600 uppercase font-black tracking-widest">Inv</p>
+                    <p className="text-sm font-black text-white">{shop._count.invoices}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-[10px] text-slate-600 uppercase font-black tracking-[0.2em] mb-1">Invoices</p>
-                    <div className="flex items-center justify-center gap-2">
-                      <FileText className="w-3.5 h-3.5 text-[#00CF64]" />
-                      <p className="text-xl font-black text-white">{shop._count.invoices}</p>
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-[10px] text-slate-600 uppercase font-black tracking-[0.2em] mb-1">Staff</p>
-                    <div className="flex items-center justify-center gap-2">
-                      <Users className="w-3.5 h-3.5 text-[#00CF64]" />
-                      <p className="text-xl font-black text-white">{shop._count.users}</p>
-                    </div>
+                    <p className="text-[7px] text-slate-600 uppercase font-black tracking-widest">Users</p>
+                    <p className="text-sm font-black text-white">{shop._count.users}</p>
                   </div>
                 </div>
+                  <div className="text-center">
+                    <p className="text-[7px] text-slate-600 uppercase font-black tracking-widest">Staff</p>
+                    <p className="text-sm font-black text-white">{shop._count.users}</p>
+                  </div>
 
-                <div className="flex items-center gap-4">
-                  <Button variant="ghost" size="icon" className="w-12 h-12 text-slate-600 hover:text-[#00CF64] hover:bg-[#00CF64]/10 rounded-2xl border border-white/5 transition-all">
-                    <Settings className="w-5 h-5" />
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" size="icon" className="w-8 h-8 text-slate-600 hover:text-[#00CF64] hover:bg-[#00CF64]/10 rounded-lg border border-white/5 transition-all">
+                    <Settings className="w-4 h-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="w-12 h-12 text-[#00CF64] bg-[#00CF64]/5 hover:bg-[#00CF64] hover:text-white rounded-2xl border border-[#00CF64]/20 transition-all">
-                    <ChevronRight className="w-6 h-6" />
+                  <Button variant="ghost" size="icon" className="w-8 h-8 text-[#00CF64] bg-[#00CF64]/5 hover:bg-[#00CF64] hover:text-white rounded-lg border border-[#00CF64]/20 transition-all">
+                    <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>
               </div>

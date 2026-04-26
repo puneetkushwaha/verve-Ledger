@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingCart, 
-  BarChart3, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  BarChart3,
+  Settings,
   LogOut,
   Bell,
   Search,
@@ -24,7 +24,10 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
-  Zap
+  Zap,
+  Activity,
+  Box,
+  Fingerprint
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -39,7 +42,7 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
   const { data: session, status } = useSession();
-  
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -61,11 +64,12 @@ export default function DashboardLayout({
 
   const navItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", roles: ["OWNER", "USER", "ADMIN"] },
-    { icon: ShoppingCart, label: "POS Billing", href: "/pos", roles: ["OWNER", "USER"] },
-    { icon: Package, label: "Inventory", href: "/inventory", roles: ["OWNER", "USER"] },
-    { icon: FileText, label: "Transactions", href: "/invoices", roles: ["OWNER", "USER", "ADMIN"] },
-    { icon: Users, label: "Staff", href: "/staff", roles: ["OWNER"] },
+    { icon: ShoppingCart, label: "Billing", href: "/pos", roles: ["OWNER", "USER"] },
+    { icon: Box, label: "Inventory", href: "/inventory", roles: ["OWNER", "USER"] },
+    { icon: FileText, label: "Bill History", href: "/invoices", roles: ["OWNER", "USER", "ADMIN"] },
+    { icon: Fingerprint, label: "Staff", href: "/staff", roles: ["OWNER"] },
     { icon: Store, label: "Shops", href: "/shops", roles: ["OWNER", "ADMIN"] },
+    { icon: Zap, label: "Requests", href: "/admin/requests", roles: ["ADMIN"] },
     { icon: Crown, label: "Subscription", href: "/subscription", roles: ["OWNER"] },
     { icon: BarChart3, label: "Analytics", href: "/analytics", roles: ["OWNER", "ADMIN"] },
     { icon: Settings, label: "Settings", href: "/settings", roles: ["OWNER", "USER", "ADMIN"] },
@@ -81,10 +85,16 @@ export default function DashboardLayout({
   if (status === "loading") {
     return (
       <div className="h-screen bg-[#02010a] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Image src="/w-logo.png" alt="Verve" width={48} height={48} className="animate-pulse" unoptimized />
-          <div className="w-48 h-1 bg-white/5 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-[#00CF64] to-[#10B981] rounded-full animate-pulse" style={{ width: "60%" }} />
+        <div className="flex flex-col items-center gap-8">
+          <div className="relative">
+            <div className="absolute inset-0 bg-[#00CF64] blur-3xl opacity-20 animate-pulse" />
+            <Image src="/w-logo.png" alt="Verve" width={64} height={64} className="relative z-10 animate-bounce" unoptimized priority />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-[10px] font-black text-[#00CF64] uppercase tracking-[0.8em] ml-2 animate-pulse">Initializing Neural Link</p>
+            <div className="w-64 h-1 bg-white/5 rounded-full overflow-hidden border border-white/5">
+              <div className="h-full bg-gradient-to-r from-[#00CF64] to-[#10B981] rounded-full animate-loading-bar" style={{ width: "100%" }} />
+            </div>
           </div>
         </div>
       </div>
@@ -95,28 +105,27 @@ export default function DashboardLayout({
     <>
       {/* Logo */}
       <div className={cn(
-        "flex items-center h-[72px] px-4 shrink-0 border-b border-white/[0.06]",
-        isCollapsed ? "justify-center" : "gap-3 justify-between"
+        "flex items-center h-20 px-6 shrink-0 border-b border-white/[0.04] relative overflow-hidden",
+        isCollapsed ? "justify-center" : "gap-4 justify-between"
       )}>
-        <Link href="/dashboard" className="flex items-center gap-3 group min-w-0">
-          <div className="w-8 h-8 shrink-0 rounded-lg bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center group-hover:border-[#00CF64]/50 transition-all p-1">
-            <Image src="/w-logo.png" alt="Verve" width={22} height={22} className="object-contain" unoptimized />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-[#00CF64]/5 blur-2xl rounded-full -mr-12 -mt-12" />
+        <Link href="/dashboard" className="flex items-center gap-3 group min-w-0 relative z-10">
+          <div className="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-[#00CF64]/20 to-transparent border border-[#00CF64]/20 flex items-center justify-center group-hover:border-[#00CF64]/50 group-hover:scale-105 transition-all p-2 shadow-2xl relative overflow-hidden">
+            <div className="absolute inset-0 bg-[#00CF64] opacity-0 group-hover:opacity-10 transition-opacity" />
+            <Image src="/w-logo.png" alt="V" width={24} height={24} className="object-contain relative z-10" unoptimized priority />
           </div>
           {!isCollapsed && (
-            <div className="min-w-0 overflow-hidden">
-              <p className="text-[13px] font-black text-white uppercase tracking-tight font-outfit truncate">Verve Ledger</p>
-              <p className="text-[9px] text-[#00CF64]/80 font-bold uppercase tracking-[0.15em] truncate">Verve Nova Technologies</p>
+            <div className="min-w-0 overflow-hidden flex flex-col justify-center">
+              <p className="text-sm font-black text-white uppercase tracking-tighter font-outfit truncate leading-none mb-1">Billzer</p>
+              <p className="text-[7.5px] text-slate-500 font-bold uppercase tracking-[0.3em] truncate leading-none">Nova Technologies</p>
             </div>
           )}
         </Link>
-        {/* Mobile close btn */}
-        <button className="lg:hidden text-slate-500 hover:text-white p-1" onClick={() => setIsMobileMenuOpen(false)}>
-          <X className="w-5 h-5" />
-        </button>
+
         {/* Desktop collapse btn */}
         {!isCollapsed && (
-          <button 
-            className="hidden lg:flex text-slate-600 hover:text-white transition-colors p-1"
+          <button
+            className="hidden lg:flex text-slate-700 hover:text-[#00CF64] transition-all p-2 hover:bg-white/5 rounded-xl border border-transparent hover:border-white/5"
             onClick={() => setIsCollapsed(true)}
           >
             <ChevronLeft className="w-4 h-4" />
@@ -126,13 +135,15 @@ export default function DashboardLayout({
 
       {/* Nav Section Label */}
       {!isCollapsed && (
-        <p className="px-6 pt-6 pb-2 text-[9px] font-black uppercase tracking-[0.4em] text-slate-600">
-          {isAdmin ? "Admin Panel" : "Navigation"}
-        </p>
+        <div className="px-6 pt-6 pb-2">
+          <p className="text-[8.5px] font-black uppercase tracking-[0.4em] text-slate-600">
+            {isAdmin ? "Global Core" : "System Access"}
+          </p>
+        </div>
       )}
 
       {/* Nav Items */}
-      <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-4 py-4 space-y-2 overflow-y-auto custom-scrollbar">
         {filteredNav.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -140,25 +151,28 @@ export default function DashboardLayout({
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-3 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all duration-200 group relative",
+                "flex items-center gap-3 px-4 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 group relative",
                 isCollapsed ? "justify-center" : "",
                 isActive
-                  ? "bg-[#00CF64] text-white shadow-[0_4px_24px_rgba(0,207,100,0.3)]"
-                  : "text-slate-500 hover:text-white hover:bg-white/[0.06]"
+                  ? "bg-white text-black shadow-lg scale-[1.02]"
+                  : "text-slate-600 hover:text-white hover:bg-white/[0.04]"
               )}
             >
+              {isActive && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#00CF64] rounded-r-full blur-[2px]" />
+              )}
               <item.icon className={cn(
-                "w-5 h-5 shrink-0 transition-all duration-200",
-                isActive ? "text-white" : "text-slate-500 group-hover:text-white group-hover:scale-110"
+                "w-5 h-5 shrink-0 transition-all duration-300",
+                isActive ? "text-black" : "text-slate-700 group-hover:text-[#00CF64] group-hover:scale-110"
               )} />
               {!isCollapsed && (
                 <span className="truncate">{item.label}</span>
               )}
               {/* Tooltip on collapsed */}
               {isCollapsed && (
-                <div className="absolute left-full ml-3 px-3 py-1.5 bg-[#111] border border-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[90] whitespace-nowrap shadow-2xl pointer-events-none">
+                <div className="absolute left-full ml-4 px-4 py-2 bg-[#050505] border border-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[90] whitespace-nowrap shadow-3xl pointer-events-none scale-95 group-hover:scale-100">
                   {item.label}
-                  <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#111]" />
+                  <div className="absolute right-full top-1/2 -translate-y-1/2 border-6 border-transparent border-r-[#050505]" />
                 </div>
               )}
             </Link>
@@ -168,125 +182,152 @@ export default function DashboardLayout({
 
       {/* Expiry Warning */}
       {isOwner && isExpired && !isCollapsed && (
-        <div className="mx-3 mb-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
-          <div className="flex items-center gap-2 mb-1">
-            <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-            <p className="text-[10px] font-black text-red-400 uppercase tracking-widest">Plan Expired</p>
+        <div className="mx-4 mb-4 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 shadow-2xl animate-pulse">
+          <div className="flex items-center gap-3 mb-2">
+            <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0" />
+            <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest">Core Depleted</p>
           </div>
-          <p className="text-[9px] text-slate-500 leading-relaxed">Renew to restore full access.</p>
+          <p className="text-[9px] text-slate-500 leading-relaxed font-bold">Renew protocols to restore matrix access.</p>
         </div>
       )}
 
-      {/* Bottom: Collapse + Logout */}
-      <div className="px-3 pb-4 pt-2 border-t border-white/5 space-y-1">
-        {/* Expand btn (only when collapsed on desktop) */}
+      {/* Bottom: Logout Section */}
+      <div className="px-4 pb-6 pt-4 border-t border-white/[0.04] space-y-2">
         {isCollapsed && (
           <button
-            className="hidden lg:flex w-full items-center justify-center p-2.5 rounded-xl text-slate-500 hover:text-white hover:bg-white/5 transition-all"
+            className="hidden lg:flex w-full items-center justify-center h-12 rounded-2xl text-slate-700 hover:text-white hover:bg-white/5 transition-all border border-transparent hover:border-white/5"
             onClick={() => setIsCollapsed(false)}
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-5 h-5" />
           </button>
         )}
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
           className={cn(
-            "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[12px] font-black uppercase tracking-widest text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all",
+            "w-full flex items-center gap-4 px-4 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-700 hover:text-rose-500 hover:bg-rose-500/10 transition-all border border-transparent hover:border-rose-500/10",
             isCollapsed ? "justify-center px-0" : ""
           )}
         >
-          <LogOut className="w-[18px] h-[18px] shrink-0" />
-          {!isCollapsed && <span>Sign Out</span>}
+          <LogOut className="w-5 h-5 shrink-0" />
+          {!isCollapsed && <span>Logout</span>}
         </button>
       </div>
     </>
   );
 
   return (
-    <div className="flex h-screen bg-[#02010a] text-slate-400 antialiased overflow-hidden">
-
+    <div className="flex h-screen bg-[#02010a] text-slate-500 antialiased overflow-hidden font-outfit">
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] lg:hidden"
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] lg:hidden animate-in fade-in duration-300"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       {/* SIDEBAR */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-[70] bg-[#06060a] border-r border-white/[0.06] flex flex-col transition-all duration-300 shadow-[4px_0_30px_rgba(0,0,0,0.4)]",
-        // Mobile: slide in/out
+        "fixed inset-y-0 left-0 z-[70] bg-[#050505] border-r border-white/[0.04] flex flex-col transition-all duration-500 shadow-[20px_0_100px_rgba(0,0,0,0.8)]",
         "lg:relative lg:translate-x-0",
-        isMobileMenuOpen ? "translate-x-0 w-64" : "-translate-x-full lg:translate-x-0",
-        // Desktop: collapsed vs expanded
-        isCollapsed ? "lg:w-[72px]" : "lg:w-64"
+        isMobileMenuOpen ? "translate-x-0 w-60" : "-translate-x-full lg:translate-x-0",
+        isCollapsed ? "lg:w-[80px]" : "lg:w-60"
       )}>
         <SidebarContent />
       </aside>
 
-      {/* MAIN CONTENT */}
-      <main className="flex-1 flex flex-col overflow-hidden min-w-0">
+      {/* MAIN CONTENT CONTAINER */}
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0 relative">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#00CF64]/5 blur-[150px] -mr-96 -mt-96 pointer-events-none rounded-full opacity-50" />
 
-        {/* Topbar */}
-        <header className="h-16 shrink-0 bg-[#06060a]/90 backdrop-blur-xl border-b border-white/[0.06] flex items-center gap-4 px-4 md:px-6">
+        {/* TOPBAR */}
+        <header className="h-14 shrink-0 bg-[#050505]/80 backdrop-blur-3xl border-b border-white/[0.04] flex items-center gap-4 px-6 md:px-8 relative z-50">
           {/* Mobile menu toggle */}
           <button
-            className="lg:hidden text-slate-400 hover:text-white transition-colors p-1"
+            className="lg:hidden text-slate-500 hover:text-white transition-all p-1.5 hover:bg-white/5 rounded-lg border border-white/5"
             onClick={() => setIsMobileMenuOpen(true)}
           >
             <Menu className="w-5 h-5" />
           </button>
 
-          {/* Search */}
-          <div className="relative flex-1 max-w-md hidden md:block">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
+          {/* Institutional Search */}
+          <div className="relative flex-1 max-w-lg hidden lg:block group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-700 group-focus-within:text-[#00CF64] transition-colors" />
             <input
               type="text"
-              placeholder="Search..."
-              className="w-full pl-10 pr-4 h-10 bg-white/[0.04] border border-white/[0.06] rounded-xl text-sm text-white placeholder:text-slate-600 focus:border-[#00CF64]/40 focus:outline-none transition-all"
+              placeholder="Search anything..."
+              className="w-full pl-11 pr-4 h-9 bg-white/[0.03] border border-white/[0.06] rounded-xl text-[12px] text-white placeholder:text-slate-800 outline-none transition-all shadow-inner relative z-10"
             />
           </div>
 
-          <div className="ml-auto flex items-center gap-3">
-            {/* Trial Badge */}
+          <div className="ml-auto flex items-center gap-6">
+            {/* Trial Status Protocol */}
             {isOwner && isTrial && !isExpired && planExpiry && (
-              <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[9px] font-black uppercase tracking-widest hidden sm:flex">
-                <Zap className="w-3 h-3 mr-1" />
-                Trial · {Math.ceil((planExpiry.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}d left
-              </Badge>
+              <div className="hidden xl:flex items-center gap-4 bg-amber-500/5 border border-amber-500/10 px-5 py-2.5 rounded-[1.2rem] shadow-2xl">
+                <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
+                <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest">
+                  Trial Mode · {Math.ceil((planExpiry.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}d Left
+                </p>
+              </div>
             )}
 
-            {/* Notifications */}
-            <button className="relative w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-slate-500 hover:text-white hover:border-white/20 transition-all">
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-[#00CF64] rounded-full" />
-            </button>
-
-            {/* Divider */}
-            <div className="w-px h-6 bg-white/10 hidden sm:block" />
-
-            {/* User */}
-            <div className="flex items-center gap-2.5 cursor-pointer group">
-              <div className="text-right hidden sm:block">
-                <p className="text-xs font-black text-white uppercase tracking-tight truncate max-w-[120px]">
-                  {session?.user?.name || "User"}
-                </p>
-                <p className="text-[9px] text-[#00CF64] font-black uppercase tracking-[0.2em] flex items-center justify-end gap-1">
-                  {isAdmin && <ShieldCheck className="w-2.5 h-2.5" />}
-                  {isAdmin ? "Admin" : isOwner ? (user?.plan || "Owner") : "Staff"}
-                </p>
-              </div>
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#00CF64] to-[#10B981] flex items-center justify-center text-white shrink-0 group-hover:scale-105 transition-all shadow-lg">
-                {isAdmin ? <ShieldCheck className="w-4 h-4" /> : <User className="w-4 h-4" />}
+            {/* Notification Node */}
+            <div className="relative group/notif">
+              <button className="relative w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-slate-700 hover:text-white hover:border-[#00CF64]/30 hover:bg-white/[0.06] transition-all">
+                <Bell className="w-4 h-4 group-hover/notif:rotate-12 transition-transform" />
+                <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-[#00CF64] rounded-full border border-[#050505] shadow-[0_0_10px_rgba(0,207,100,0.8)]" />
+              </button>
+              
+              {/* Notifications Dropdown */}
+              <div className="absolute right-0 top-full mt-2 w-72 bg-[#050505] border border-white/10 rounded-2xl shadow-2xl opacity-0 translate-y-2 pointer-events-none group-hover/notif:opacity-100 group-hover/notif:translate-y-0 group-hover/notif:pointer-events-auto transition-all duration-300 z-50 overflow-hidden">
+                <div className="p-4 border-b border-white/5 bg-white/[0.02] flex justify-between items-center">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-white">Notifications</p>
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#00CF64] animate-pulse" />
+                </div>
+                <div className="p-2 max-h-80 overflow-y-auto custom-scrollbar">
+                    <div className="p-3 hover:bg-white/[0.03] rounded-xl transition-all cursor-pointer group/item">
+                        <p className="text-[10px] font-black text-white uppercase tracking-tight group-hover/item:text-[#00CF64]">System Online</p>
+                        <p className="text-[8px] text-slate-500 mt-0.5">Everything is working perfectly</p>
+                    </div>
+                    <div className="p-3 hover:bg-white/[0.03] rounded-xl transition-all cursor-pointer group/item border-t border-white/[0.02]">
+                        <p className="text-[10px] font-black text-white uppercase tracking-tight group-hover/item:text-[#00CF64]">Welcome to Billzer</p>
+                        <p className="text-[8px] text-slate-500 mt-0.5">Your dashboard is ready to use</p>
+                    </div>
+                </div>
+                <div className="p-3 border-t border-white/5 bg-white/[0.01] text-center">
+                    <button className="text-[8px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors">Clear All Protocols</button>
+                </div>
               </div>
             </div>
+
+            {/* Vertical Splitter */}
+            <div className="w-px h-8 bg-white/5 hidden sm:block" />
+
+            {/* Identity Node */}
+            <Link href="/settings" className="flex items-center gap-3 cursor-pointer group p-1 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05] transition-all pr-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00CF64] to-[#10B981] flex items-center justify-center text-black shrink-0 shadow-lg relative overflow-hidden group-hover:scale-105 transition-transform">
+                <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                {isAdmin ? <ShieldCheck className="w-4 h-4" /> : <User className="w-4 h-4 font-bold" />}
+              </div>
+              <div className="text-left hidden md:block">
+                <p className="text-[11px] font-black text-white uppercase tracking-tight truncate max-w-[120px]">
+                  {session?.user?.name || "Neural Operator"}
+                </p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-[8px] text-[#00CF64] font-black uppercase tracking-[0.2em]">
+                    {isAdmin ? "Administrator" : isOwner ? (user?.plan || "Owner") : "Staff Member"}
+                  </p>
+                </div>
+              </div>
+            </Link>
           </div>
         </header>
 
-        {/* Page Content */}
-        <div className="flex-1 overflow-y-auto bg-[#02010a] p-4 md:p-8">
-          {children}
+        {/* Dynamic Page Core */}
+        <div className="flex-1 overflow-y-auto bg-[#02010a] p-6 md:p-12 relative">
+          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#050505]/50 to-transparent pointer-events-none" />
+          <div className="relative z-10 max-w-7xl mx-auto w-full">
+            {children}
+          </div>
         </div>
       </main>
     </div>

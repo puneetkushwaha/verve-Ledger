@@ -23,13 +23,16 @@ export async function GET() {
     }
 
     return NextResponse.json({
-      shopName: shop.name,
-      email: shop.email,
-      phone: shop.phone,
-      address: shop.address,
+      shopName: shop.name || "",
+      email: shop.email || "",
+      phone: shop.phone || "",
+      address: shop.address || "",
       invoicePrefix: shop.settings?.invoicePrefix || "INV",
       themeColor: shop.settings?.themeColor || "#00CF64",
       fontFamily: shop.settings?.fontFamily || "Inter",
+      upiId: (shop.settings as any)?.upiId || "",
+      gstin: (shop.settings as any)?.gstin || "",
+      defaultGstRate: (shop.settings as any)?.defaultGstRate || 18,
       terms: shop.settings?.terms || ""
     });
   } catch (error) {
@@ -49,7 +52,19 @@ export async function PUT(req: Request) {
 
   try {
     const body = await req.json();
-    const { shopName, email, phone, address, invoicePrefix, themeColor, fontFamily, terms } = body;
+    const { 
+      shopName, 
+      email, 
+      phone, 
+      address, 
+      invoicePrefix, 
+      themeColor, 
+      fontFamily, 
+      terms, 
+      upiId,
+      gstin,
+      defaultGstRate 
+    } = body;
 
     // Update Shop and Settings in a transaction
     await prisma.$transaction([
@@ -57,25 +72,31 @@ export async function PUT(req: Request) {
         where: { id: user.shopId },
         data: {
           name: shopName,
-          email,
-          phone,
-          address
+          email: email,
+          phone: phone,
+          address: address,
         }
       }),
       prisma.setting.upsert({
         where: { shopId: user.shopId },
         update: {
-          invoicePrefix,
-          themeColor,
-          fontFamily,
-          terms
+          invoicePrefix: invoicePrefix || "INV",
+          themeColor: themeColor || "#8BC34A",
+          fontFamily: fontFamily || "Inter",
+          terms: terms || "",
+          upiId: upiId || "",
+          gstin: gstin || "",
+          defaultGstRate: Number(defaultGstRate) || 18
         },
         create: {
           shopId: user.shopId,
-          invoicePrefix,
-          themeColor,
-          fontFamily,
-          terms
+          invoicePrefix: invoicePrefix || "INV",
+          themeColor: themeColor || "#8BC34A",
+          fontFamily: fontFamily || "Inter",
+          terms: terms || "",
+          upiId: upiId || "",
+          gstin: gstin || "",
+          defaultGstRate: Number(defaultGstRate) || 18
         }
       })
     ]);

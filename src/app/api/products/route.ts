@@ -48,7 +48,8 @@ export async function POST(req: Request) {
         description,
         sku,
         hsnCode,
-        gstRate: parseFloat(gstRate || "18")
+        gstRate: parseFloat(gstRate || "18"),
+        category: category || "General"
       },
     });
 

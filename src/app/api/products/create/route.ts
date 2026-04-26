@@ -23,8 +23,9 @@ export async function POST(req: Request) {
         sku: body.sku,
         hsnCode: body.hsnCode,
         gstRate: body.gstRate || 18,
+        category: body.category || "General",
         shopId: user.shopId,
-      },
+      } as any,
     });
 
     return NextResponse.json(product, { status: 201 });

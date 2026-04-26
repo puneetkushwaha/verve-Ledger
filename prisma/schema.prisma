@@ -70,6 +70,7 @@ model Product {
   unit        String   @default("PCS") // PCS, KG, LTR, etc.
   hsnCode     String?
   gstRate     Float    @default(18)
+  category    String   @default("General")
   shopId      String   @db.ObjectId
   shop        Shop     @relation(fields: [shopId], references: [id])
   createdAt   DateTime @default(now())
@@ -141,6 +142,11 @@ model Setting {
   currency        String  @default("INR")
   themeColor      String  @default("#00CF64")
   fontFamily      String  @default("Inter")
+  upiId           String?
+  gstin           String?
+  defaultGstRate  Float   @default(18)
   terms           String?
 }
+
+
 

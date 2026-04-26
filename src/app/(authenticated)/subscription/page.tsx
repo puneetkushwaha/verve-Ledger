@@ -18,6 +18,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { RazorpayScript } from "@/components/payments/RazorpayScript";
+import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
 const RAZORPAY_KEY_ID = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 
@@ -84,7 +86,7 @@ export default function SubscriptionPage() {
         key: RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: "INR",
-        name: "Verve Ledger",
+        name: "Billzer",
         description: `${plan?.name} Subscription`,
         order_id: order.id,
         handler: async function (response: any) {
@@ -92,7 +94,7 @@ export default function SubscriptionPage() {
           // We could also call a verification API here, but Webhook is safer.
           // For immediate UI update, we can refresh the page or session.
           setTimeout(() => {
-            window.location.reload();
+            window.location.href = "/dashboard";
           }, 2000);
         },
         prefill: {
@@ -119,14 +121,13 @@ export default function SubscriptionPage() {
     setLoading("CUSTOM");
     
     try {
-      const res = await fetch("/api/subscription/request", {
+      const res = await fetch("/api/plan-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...customData,
-          shopId: (session?.user as any)?.shopId,
-          shopName: session?.user?.name,
-          email: session?.user?.email
+          message: customData.message,
+          phone: customData.phone,
+          planType: "CUSTOM_REQUEST"
         })
       });
       
@@ -144,70 +145,66 @@ export default function SubscriptionPage() {
   };
 
   return (
-    <div className="space-y-12 pb-20">
+    <div className="space-y-6 pb-20">
       <RazorpayScript />
-      <div className="text-center max-w-3xl mx-auto space-y-4">
-        <h2 className="text-4xl font-black font-outfit text-white tracking-tighter uppercase">Elevate Your Matrix</h2>
-        <p className="text-slate-500 font-black uppercase text-[10px] tracking-[0.3em]">
-          Scale your business with institutional-grade intelligence and unlimited operations.
+      <div className="text-center max-w-2xl mx-auto space-y-1.5">
+        <h2 className="text-xl font-black font-outfit text-white tracking-tighter uppercase">Subscription Plans</h2>
+        <p className="text-slate-500 font-bold uppercase text-[7px] tracking-widest">
+          Choose your business protocol
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
         {plans.map((plan) => (
-          <Card 
-            key={plan.id} 
-            className={`bg-[#050505] border-white/5 rounded-[40px] overflow-hidden relative group transition-all duration-500 hover:border-[#00CF64]/30 ${plan.popular ? 'border-[#00CF64]/50' : ''}`}
-          >
+          <Card key={plan.id} className={cn(
+            "premium-card relative overflow-hidden group bg-[#050505] border-white/5 rounded-[2.5rem] transition-all duration-500",
+            plan.popular ? "border-[#00CF64]/40 shadow-[0_0_50px_rgba(0,207,100,0.1)]" : "hover:border-white/20"
+          )}>
             {plan.popular && (
-              <div className="absolute top-6 right-6">
-                <Badge className="bg-[#00CF64] text-white font-black uppercase tracking-widest text-[9px] px-3 py-1">Most Popular</Badge>
+              <div className="absolute top-8 right-8 z-20">
+                <div className="bg-[#00CF64] text-black font-black uppercase tracking-[0.2em] text-[9px] px-4 py-1.5 rounded-full shadow-2xl">
+                  Most Popular
+                </div>
               </div>
             )}
-            <div className={`absolute top-0 right-0 w-64 h-64 blur-[100px] rounded-full -mr-32 -mt-32 opacity-10 group-hover:opacity-20 transition-opacity bg-${plan.color}-500`} />
             
-            <CardHeader className="p-10 pb-0 relative z-10">
-              <div className={`w-14 h-14 rounded-2xl bg-${plan.color}-500/10 flex items-center justify-center text-${plan.color}-400 mb-6 border border-white/5`}>
-                <plan.icon className="w-8 h-8" />
-              </div>
-              <CardTitle className="text-2xl font-black font-outfit text-white uppercase tracking-tight">{plan.name}</CardTitle>
-              <div className="mt-4 flex items-baseline gap-2">
-                <span className="text-5xl font-black text-white font-outfit tracking-tighter">{plan.price}</span>
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{plan.duration}</span>
-              </div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#00CF64]/10 blur-[80px] -mr-16 -mt-16 transition-all duration-700 opacity-0 group-hover:opacity-100" />
+            
+            <CardHeader className="p-10 pb-6 relative z-10">
+                <p className="text-[10px] font-black text-[#00CF64] uppercase tracking-[0.4em] mb-4">{plan.name}</p>
+                <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black text-white font-outfit tracking-tighter">₹{plan.price}</span>
+                    <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest">/ lifecycle</span>
+                </div>
             </CardHeader>
+            
+            <CardContent className="p-10 pt-0 space-y-8 relative z-10">
+                <div className="space-y-4">
+                    {plan.features.map((feature, i) => (
+                        <div key={i} className="flex items-center gap-4 group/item">
+                            <div className="w-6 h-6 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#00CF64] group-hover/item:bg-[#00CF64] group-hover/item:text-black transition-all">
+                                <Check className="w-3.5 h-3.5" />
+                            </div>
+                            <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest group-hover/item:text-white transition-colors">{feature}</span>
+                        </div>
+                    ))}
+                </div>
 
-            <CardContent className="p-10 space-y-6 relative z-10">
-              <div className="space-y-4">
-                {plan.features.map((feature, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full bg-[#00CF64]/10 flex items-center justify-center">
-                      <Check className="w-3 h-3 text-[#00CF64]" />
-                    </div>
-                    <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">{feature}</span>
-                  </div>
-                ))}
-              </div>
+                <Button 
+                    className={cn(
+                        "w-full h-14 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl transition-all",
+                        (session?.user as any)?.planId === plan.id ? "bg-white/5 border border-white/10 text-slate-500 cursor-not-allowed" : "bg-[#00CF64] text-white hover:bg-[#10B981] hover:scale-[1.02] active:scale-95"
+                    )}
+                    disabled={(session?.user as any)?.planId === plan.id || loading === plan.id}
+                    onClick={() => handleSubscribe(plan.id)}
+                >
+                    {(session?.user as any)?.planId === plan.id ? "Active Protocol" : (loading === plan.id ? <Loader2 className="animate-spin" /> : "Request Authorization")}
+                </Button>
             </CardContent>
-
-            <CardFooter className="p-10 pt-0 relative z-10">
-              <Button 
-                onClick={() => handleSubscribe(plan.id)}
-                disabled={!!loading}
-                className={`w-full h-14 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all ${
-                  plan.popular 
-                    ? 'bg-[#00CF64] hover:bg-[#10B981] text-white shadow-[0_0_30px_rgba(0,207,100,0.2)]' 
-                    : 'bg-white/5 text-white hover:bg-white/10 border border-white/5'
-                }`}
-              >
-                {loading === plan.id ? "Initializing..." : "Activate Now"}
-              </Button>
-            </CardFooter>
           </Card>
         ))}
       </div>
 
-      {/* Custom Plan / Contact Admin Section */}
       <div className="bg-[#050505] border border-white/5 rounded-[48px] p-12 flex flex-col md:flex-row items-center justify-between gap-10 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/5 blur-[100px] -mr-64 -mt-64" />
         

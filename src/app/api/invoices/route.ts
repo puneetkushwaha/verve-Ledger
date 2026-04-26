@@ -86,6 +86,11 @@ export async function POST(req: Request) {
               total: item.price * item.quantity
             }))
           }
+        },
+        include: {
+          items: {
+            include: { product: true }
+          }
         }
       });
 

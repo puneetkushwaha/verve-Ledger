@@ -15,7 +15,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Verve Ledger - Enterprise Business Intelligence",
+  title: "VNT Billzer - Enterprise Business Intelligence",
   description: "Premium Retail OS and Business Intelligence Framework engineered by Verve Nova Technologies.",
   manifest: "/manifest.json",
 };

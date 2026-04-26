@@ -66,6 +66,20 @@
     @apply bg-background text-foreground selection:bg-[#00CF64]/30 antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+  
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #02010a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
 }
 
 @layer utilities {
@@ -77,5 +91,14 @@
   }
   .glow-green {
     @apply shadow-[0_0_50px_-12px_rgba(0,207,100,0.5)];
+  }
+  .text-glow {
+    text-shadow: 0 0 10px rgba(0, 207, 100, 0.5);
+  }
+  .premium-card {
+    @apply bg-[#050505] border border-white/5 shadow-2xl rounded-[3rem] overflow-hidden hover:border-[#00CF64]/20 transition-all duration-500;
+  }
+  .premium-input {
+    @apply h-16 bg-white/5 border-white/10 rounded-2xl text-white px-6 font-bold focus:border-[#00CF64]/50 focus:bg-white/[0.08] transition-all duration-300 outline-none;
   }
 }

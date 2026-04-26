@@ -32,7 +32,9 @@ export default function LoginPage() {
         toast.error("Invalid email or password. Please try again.");
       } else {
         toast.success("Login successful!");
-        window.location.href = "/dashboard";
+        const params = new URLSearchParams(window.location.search);
+        const callbackUrl = params.get("callbackUrl") || "/dashboard";
+        window.location.href = callbackUrl;
       }
     } catch (error) {
       toast.error("Something went wrong");
