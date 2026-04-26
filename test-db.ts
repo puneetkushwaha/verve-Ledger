@@ -1,21 +1,10 @@
 import "dotenv/config";
-import { PrismaClient } from "./node_modules/@prisma/client";
-import { PrismaLibSql } from "./node_modules/@prisma/adapter-libsql";
-import path from "path";
+import { PrismaClient } from "@prisma/client";
 
 async function test() {
-  const rawUrl = process.env.DATABASE_URL || "file:dev.db";
-  const cleanPath = rawUrl.replace("file:", "");
-  const absolutePath = path.isAbsolute(cleanPath) ? cleanPath : path.join(process.cwd(), cleanPath);
-  const finalUrl = `file:${absolutePath}`;
-  
-  console.log("Testing with URL:", finalUrl);
+  console.log("Testing DB connection with URL:", process.env.DATABASE_URL?.slice(0, 30) + "...");
 
-  const adapter = new PrismaLibSql({
-    url: finalUrl,
-  });
-  
-  const prisma = new PrismaClient({ adapter });
+  const prisma = new PrismaClient();
 
   try {
     const count = await prisma.user.count();

@@ -18,10 +18,8 @@ export default async function PublicInvoicePage({ params }: { params: Promise<{ 
 
   if (!invoice) return notFound();
 
-  // Handle case where settings might be missing
-  const settings = invoice.shop?.settings && invoice.shop.settings.length > 0 
-    ? invoice.shop.settings[0] 
-    : null;
+  // settings is a single optional object (one-to-one relation)
+  const settings = invoice.shop?.settings ?? null;
     
   const themeColor = settings?.themeColor || "#8BC34A";
 
